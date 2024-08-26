@@ -1,3 +1,4 @@
+import random
 import pygame
 from pygame.locals import *
 from sys import exit
@@ -90,11 +91,19 @@ class Ball:
             return True
         return False
 
+    def collision_with_paddle(self, paddle):
+        if (self.position_x - self.radius == paddle.rect.x and 
+            self.position_y >= paddle.rect.y and 
+            self.position_y <= paddle.rect.y + paddle.rect.height):
+            return True
+        return False
+
 # Set up the player paddle
 player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, position_y=WIDTH/2, color=(255, 255, 255))
 # Set up the enemy paddle
 enemy_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH - LENGTH/32, position_y=WIDTH/2, color=(255, 255, 255))
 # Set up the ball
+ball_direction = random.choice([1, -1])
 ball = Ball(radius=LENGTH/64, position_x=LENGTH/2 - LENGTH/64, position_y=WIDTH/2 - LENGTH/64, color=(255, 255, 255), speed=-LENGTH/320)
 
 # Set up the enemy paddle direction
@@ -111,6 +120,7 @@ while True:
         if events.type == QUIT:
             pygame.quit()
             exit()
+
 
     # Draw the player paddle
     player_paddle.draw(screen)
@@ -129,6 +139,9 @@ while True:
     # Draw the ball
     ball.draw(screen)
     ball.move()
+
+    if ball.collision_with_paddle(player_paddle) or ball.collision_with_paddle(enemy_paddle):
+        ball.speed_x *= -1
 
     enemy_paddle.move(enemy_paddle_direction  * LENGTH/320)
 
