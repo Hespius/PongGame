@@ -28,47 +28,64 @@ class Paddle:
     def move(self, direction):
         if direction > 0:
             # Move the paddle down
-            if not self.__bottom_limit():
+            if not self.bottom_limit():
                 self.rect.y += direction
         else:
             # Move the paddle up
-            if not self.__top_limit():
+            if not self.top_limit():
                 self.rect.y += direction
 
-    def __top_limit(self):
+    def top_limit(self):
         # Set up the top limit of the paddle
         if self.rect.y == 0:
             return True
         return False
 
-    def __bottom_limit(self):
+    def bottom_limit(self):
         # Set up the bottom limit of the paddle
         if self.rect.y == WIDTH - self.rect.height:
             return True
         return False
 
+    def at_the_limit(self):
+        if self.top_limit() or self.bottom_limit():
+            return True
+        return False
+
+
 # Set up the player paddle
 player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, position_y=WIDTH/2, color=(255, 255, 255))
+enemy_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH - LENGTH/32, position_y=WIDTH/2, color=(255, 255, 255))
 
+# Set up the enemy paddle direction
+enemy_paddle_direction = 1
 
-if __name__ == "__main__":
-    while True:
-        # Set up the frame rate
-        clock.tick(120)
+while True:
+    # Set up the frame rate
+    clock.tick(120)
 
-        # Set up the background
-        screen.fill((0, 0, 0))
+    # Set up the background
+    screen.fill((0, 0, 0))
 
-        for events in pygame.event.get():
-            if events.type == QUIT:
-                pygame.quit()
-                exit()
+    for events in pygame.event.get():
+        if events.type == QUIT:
+            pygame.quit()
+            exit()
 
-        if pygame.key.get_pressed()[K_UP]:
-            player_paddle.move(-LENGTH/320)
-        if pygame.key.get_pressed()[K_DOWN]:
-            player_paddle.move(LENGTH/320)
+    # Draw the player paddle
+    player_paddle.draw(screen)
 
-        player_paddle.draw(screen)
+    if pygame.key.get_pressed()[K_UP]:
+        player_paddle.move(-LENGTH/320)
+    if pygame.key.get_pressed()[K_DOWN]:
+        player_paddle.move(LENGTH/320)
 
-        pygame.display.update()
+    # Draw the enemy paddle
+    enemy_paddle.draw(screen)
+
+    if enemy_paddle.at_the_limit():
+        enemy_paddle_direction *= -1
+
+    enemy_paddle.move(enemy_paddle_direction  * LENGTH/320)
+
+    pygame.display.update()
