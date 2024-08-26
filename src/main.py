@@ -27,9 +27,9 @@ class Score:
         self.font = pygame.font.Font(font, int(font_size))
         self.score = 0
 
-    def draw(self, surface, player):
+    def draw(self, screen, player):
         text = self.font.render(f"{str(player).upper()} : {str(self.score).upper()}", True, self.color)
-        surface.blit(text, (self.position_x, self.position_y))
+        screen.blit(text, (self.position_x, self.position_y))
 
     def increase(self):
         self.score += 1
@@ -39,8 +39,8 @@ class Paddle:
         self.rect = pygame.Rect(position_x, position_y, width, height)
         self.color = color
 
-    def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.rect)
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
 
     def move(self, direction):
         if direction > 0:
@@ -72,6 +72,7 @@ class Paddle:
 
 class Ball:
     def __init__(self, radius, position_x, position_y, color, speed) -> None:
+        self.rect = pygame.Rect(position_x, position_y, radius, radius)
         self.color = color
         self.radius = radius
         self.position_x = position_x
@@ -79,38 +80,38 @@ class Ball:
         self.speed_x = speed
         self.speed_y = speed
 
-    def draw(self, surface):
-        pygame.draw.circle(surface, self.color, (self.position_x, self.position_y), self.radius)
-
+    def draw(self, screen):
+        self.rect = pygame.draw.ellipse(screen, self.color, self.rect)
 
     def move(self):
-        self.position_x += self.speed_x
-        self.position_y += self.speed_y
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
 
         if self.__is_at_top() or self.__is_at_bottom():
             self.speed_y *= -1
 
+
     def __is_at_top(self):
         # Set up the top limit of the ball
-        if self.position_y == 0:
+        if self.rect.y == 0:
             return True
         return False
 
     def __is_at_bottom(self):
         # Set up the bottom limit of the ball
-        if self.position_y == WIDTH - self.radius:
+        if self.rect.y == WIDTH - self.radius:
             return True
         return False
 
     def is_at_left(self):
         # Set up the left limit of the ball
-        if self.position_x == 0:
+        if self.rect.x == 0:
             return True
         return False
 
     def is_at_right(self):
         # Set up the right limit of the ball
-        if self.position_x == LENGTH - self.radius:
+        if self.rect.x == LENGTH - self.radius:
             return True
         return False
 
@@ -120,11 +121,7 @@ class Ball:
         return False
 
     def collision_with_paddle(self, paddle):
-        if (self.position_x - self.radius == paddle.rect.x and 
-            self.position_y >= paddle.rect.y and 
-            self.position_y <= paddle.rect.y + paddle.rect.height):
-            return True
-        return False
+        return self.rect.colliderect(paddle.rect)
 
 
 # Set up the player paddle
@@ -133,7 +130,7 @@ player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, po
 enemy_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH - LENGTH/32, position_y=WIDTH/2, color=(255, 255, 255))
 # Set up the ball
 ball_direction = random.choice([1, -1])
-ball = Ball(radius=LENGTH/64, position_x=LENGTH/2 - LENGTH/64, position_y=WIDTH/2 - LENGTH/64, color=(255, 255, 255), speed=ball_direction*LENGTH/320)
+ball = Ball(radius=LENGTH/48, position_x=LENGTH/2 - LENGTH/64, position_y=WIDTH/2 - LENGTH/64, color=(255, 255, 255), speed=ball_direction*LENGTH/320)
 
 # Set up the scores
 player_score = Score(position_x=LENGTH/8, position_y=WIDTH/32, color=(255, 255, 255), font_size=LENGTH/16, font=None)
