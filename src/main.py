@@ -28,34 +28,74 @@ class Paddle:
     def move(self, direction):
         if direction > 0:
             # Move the paddle down
-            if not self.bottom_limit():
+            if not self.__is_at_bottom():
                 self.rect.y += direction
         else:
             # Move the paddle up
-            if not self.top_limit():
+            if not self.__is_at_top():
                 self.rect.y += direction
 
-    def top_limit(self):
+    def __is_at_top(self):
         # Set up the top limit of the paddle
         if self.rect.y == 0:
             return True
         return False
 
-    def bottom_limit(self):
+    def __is_at_bottom(self):
         # Set up the bottom limit of the paddle
         if self.rect.y == WIDTH - self.rect.height:
             return True
         return False
 
     def at_the_limit(self):
-        if self.top_limit() or self.bottom_limit():
+        if self.__is_at_top() or self.__is_at_bottom():
             return True
         return False
 
 
+class Ball:
+    def __init__(self, radius, position_x, position_y, color, speed) -> None:
+        self.color = color
+        self.radius = radius
+        self.position_x = position_x
+        self.position_y = position_y
+        self.speed_x = speed
+        self.speed_y = speed
+
+    def draw(self, surface):
+        pygame.draw.circle(surface, self.color, (self.position_x, self.position_y), self.radius)
+
+
+    def move(self):
+        self.position_x += self.speed_x
+        self.position_y += self.speed_y
+
+        if self.__is_at_top() or self.__is_at_bottom():
+            self.speed_y *= -1
+
+    def __is_at_top(self):
+        # Set up the top limit of the ball
+        if self.position_y == 0:
+            return True
+        return False
+
+    def __is_at_bottom(self):
+        # Set up the bottom limit of the ball
+        if self.position_y == WIDTH - self.radius:
+            return True
+        return False
+
+    def at_the_limit(self):
+        if self.__is_at_top() or self.__is_at_bottom():
+            return True
+        return False
+
 # Set up the player paddle
 player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, position_y=WIDTH/2, color=(255, 255, 255))
+# Set up the enemy paddle
 enemy_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH - LENGTH/32, position_y=WIDTH/2, color=(255, 255, 255))
+# Set up the ball
+ball = Ball(radius=LENGTH/64, position_x=LENGTH/2 - LENGTH/64, position_y=WIDTH/2 - LENGTH/64, color=(255, 255, 255), speed=-LENGTH/320)
 
 # Set up the enemy paddle direction
 enemy_paddle_direction = 1
@@ -85,6 +125,10 @@ while True:
 
     if enemy_paddle.at_the_limit():
         enemy_paddle_direction *= -1
+
+    # Draw the ball
+    ball.draw(screen)
+    ball.move()
 
     enemy_paddle.move(enemy_paddle_direction  * LENGTH/320)
 
