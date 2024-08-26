@@ -7,8 +7,6 @@ pygame.init()
 # Set up the window
 LENGTH = 640
 WIDTH = 480
-# X = LENGTH / 64
-# Y = WIDTH * 3 / 8
 
 # Set up the window size
 screen = pygame.display.set_mode(size=(LENGTH, WIDTH))
@@ -28,12 +26,28 @@ class Paddle:
         pygame.draw.rect(surface, self.color, self.rect)
 
     def move(self, direction):
-        if self.rect.y >= WIDTH:
-            self.rect.y = 0
+        if direction > 0:
+            # Move the paddle down
+            if not self.__bottom_limit():
+                self.rect.y += direction
         else:
-            self.rect.y += direction
+            # Move the paddle up
+            if not self.__top_limit():
+                self.rect.y += direction
 
- 
+    def __top_limit(self):
+        # Set up the top limit of the paddle
+        if self.rect.y == 0:
+            return True
+        return False
+
+    def __bottom_limit(self):
+        # Set up the bottom limit of the paddle
+        if self.rect.y == WIDTH - self.rect.height:
+            return True
+        return False
+
+# Set up the player paddle
 player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, position_y=WIDTH/2, color=(255, 255, 255))
 
 
@@ -50,7 +64,11 @@ if __name__ == "__main__":
                 pygame.quit()
                 exit()
 
+        if pygame.key.get_pressed()[K_UP]:
+            player_paddle.move(-LENGTH/320)
+        if pygame.key.get_pressed()[K_DOWN]:
+            player_paddle.move(LENGTH/320)
+
         player_paddle.draw(screen)
-        player_paddle.move(1)
 
         pygame.display.update()
