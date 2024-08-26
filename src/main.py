@@ -102,6 +102,18 @@ class Ball:
             return True
         return False
 
+    def is_at_left(self):
+        # Set up the left limit of the ball
+        if self.position_x == 0:
+            return True
+        return False
+
+    def is_at_right(self):
+        # Set up the right limit of the ball
+        if self.position_x == LENGTH - self.radius:
+            return True
+        return False
+
     def at_the_limit(self):
         if self.__is_at_top() or self.__is_at_bottom():
             return True
@@ -113,6 +125,7 @@ class Ball:
             self.position_y <= paddle.rect.y + paddle.rect.height):
             return True
         return False
+
 
 # Set up the player paddle
 player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, position_y=WIDTH/2, color=(255, 255, 255))
@@ -163,11 +176,18 @@ while True:
     ball.draw(screen)
     ball.move()
 
+    # Check if the ball collides with the paddles
     if ball.collision_with_paddle(player_paddle) or ball.collision_with_paddle(enemy_paddle):
         ball.speed_x *= -1
 
+    # Enemy AI
     enemy_paddle.move(enemy_paddle_direction  * LENGTH/320)
 
-
+    if ball.is_at_left():
+        enemy_score.increase()
+        ball = Ball(radius=LENGTH/64, position_x=LENGTH/2 - LENGTH/64, position_y=WIDTH/2 - LENGTH/64, color=(255, 255, 255), speed=ball_direction*LENGTH/320)
+    if ball.is_at_right():
+        player_score.increase()
+        ball = Ball(radius=LENGTH/64, position_x=LENGTH/2 - LENGTH/64, position_y=WIDTH/2 - LENGTH/64, color=(255, 255, 255), speed=ball_direction*LENGTH/320)
 
     pygame.display.update()
