@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from sys import exit
-from entities import Ball, Score, Paddle, EndGame
+from entities import Ball, Score, Paddle, EndGame, Field
 from utils.constants import LENGTH, WIDTH, SCORE_TO_FINISH
 
 pygame.init()
@@ -45,6 +45,9 @@ while True:
     # Draw the scores
     player_score.draw(screen, "Player")
     enemy_score.draw(screen, "Enemy")
+
+    # Draw the field
+    Field.draw(screen)
 
     # Draw the player paddle
     player_paddle.draw(screen)
