@@ -199,8 +199,34 @@ while True:
         text = font.render("You Wins", True, (255, 255, 255))
         text_rect = text.get_rect(center=(LENGTH / 2, WIDTH / 2))
         screen.blit(text, text_rect)
+        pygame.display.update()
+
+        wainting_for_enter = True
+        while wainting_for_enter:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_KP_ENTER):
+                    pygame.quit()
+                    exit()
+                
 
         if pygame.key.get_pressed()[K_KP_ENTER]:
             pygame.quit()
+
+    # Check if the enemy wins
+    if enemy_score.score == 2:
+        screen.fill((0, 0, 0))
+        font = pygame.font.Font(None, 36)
+        text = font.render("You Lose", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(LENGTH / 2, WIDTH / 2))
+        screen.blit(text, text_rect)
+        pygame.display.update()
+
+        wainting_for_enter = True
+        while wainting_for_enter:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_KP_ENTER):
+                    pygame.quit()
+                    exit()
+
 
     pygame.display.update()
