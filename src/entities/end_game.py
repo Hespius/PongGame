@@ -3,7 +3,6 @@ import pygame
 from pygame.locals import K_KP_ENTER
 from utils.constants import LENGTH, WIDTH, SCORE_TO_FINISH
 
-
 class Result(Enum):
     WIN = "You Wins"
     LOSE = "You Lose"
@@ -32,7 +31,6 @@ class EndGame:
         text_rect = text.get_rect(center=(LENGTH / 2, WIDTH / 2 - WIDTH / 4))
         screen.blit(text, text_rect)
 
-
         font = pygame.font.Font(None, WIDTH // 8)
 
         text = font.render(f"Player 1", True, (255, 255, 255))
@@ -57,7 +55,6 @@ class EndGame:
         screen.blit(text, text_rect)
 
         pygame.display.update()
-
 
         wainting_for_enter = True
         while wainting_for_enter:

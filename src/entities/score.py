@@ -1,4 +1,5 @@
 import pygame
+from utils.constants import LENGTH, WIDTH
 
 
 class Score:
@@ -12,6 +13,15 @@ class Score:
     def draw(self, screen, player):
         text = self.font.render(f"{str(player).upper()} : {str(self.score).upper()}", True, self.color)
         screen.blit(text, (self.position_x, self.position_y))
+
+        transparent_surface = pygame.Surface((LENGTH, WIDTH), pygame.SRCALPHA)
+        transparent_surface.set_alpha(16)
+        color = (255, 255, 255)
+        giant_font = pygame.font.Font(None, int(WIDTH / 2))
+        giant_text = giant_font.render(f"{str(self.score)}", True, color)
+        giant_text_rect = giant_text.get_rect(center=(self.position_x + LENGTH/8, self.position_y + WIDTH/2))
+        transparent_surface.blit(giant_text, giant_text_rect)
+        screen.blit(transparent_surface, (0, 0))
 
     def increase(self):
         self.score += 1

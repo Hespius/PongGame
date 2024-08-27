@@ -7,7 +7,7 @@ from utils.constants import LENGTH, WIDTH, SCORE_TO_FINISH
 pygame.init()
 
 # Set up the window size
-screen = pygame.display.set_mode(size=(LENGTH, WIDTH))
+screen = pygame.display.set_mode((LENGTH, WIDTH))
 
 # Set up name of the window
 pygame.display.set_caption(title="Pong")
