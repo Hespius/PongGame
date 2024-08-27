@@ -1,14 +1,10 @@
-import random
 import pygame
 from pygame.locals import *
 from sys import exit
+from entities import Ball, Score, Paddle, EndGame
+from utils.constants import LENGTH, WIDTH, SCORE_TO_FINISH
 
 pygame.init()
-
-# Set up the window
-LENGTH = 640
-WIDTH = 480
-SCORE_TO_FINISH = 2
 
 # Set up the window size
 screen = pygame.display.set_mode(size=(LENGTH, WIDTH))
@@ -18,151 +14,6 @@ pygame.display.set_caption(title="Pong")
 
 # Set up the clock
 clock = pygame.time.Clock()
-
-
-class Score:
-    def __init__(self, position_x, position_y, color, font_size, font) -> None:
-        self.font = pygame.font.Font(font, int(font_size))
-        self.position_x = position_x
-        self.position_y = position_y
-        self.color = color
-        self.score = 0
-
-    def draw(self, screen, player):
-        text = self.font.render(f"{str(player).upper()} : {str(self.score).upper()}", True, self.color)
-        screen.blit(text, (self.position_x, self.position_y))
-
-    def increase(self):
-        self.score += 1
-
-class Paddle:
-    def __init__(self, width, height, position_x, position_y, color) -> None:
-        self.rect = pygame.Rect(position_x, position_y, width, height)
-        self.color = color
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
-
-    def move(self, direction):
-        if direction > 0:
-            # Move the paddle down
-            if not self.is_at_bottom():
-                self.rect.y += direction
-        else:
-            # Move the paddle up
-            if not self.is_at_top():
-                self.rect.y += direction
-
-    def is_at_top(self):
-        # Set up the top limit of the paddle
-        if self.rect.y == 0:
-            return True
-        return False
-
-    def is_at_bottom(self):
-        # Set up the bottom limit of the paddle
-        if self.rect.y == WIDTH - self.rect.height:
-            return True
-        return False
-
-    def at_the_limit(self):
-        if self.is_at_top() or self.is_at_bottom():
-            return True
-        return False
-
-
-class Ball:
-    def __init__(self, radius, position_x, position_y, color, speed) -> None:
-        self.rect = pygame.Rect(position_x, position_y, radius, radius)
-        self.color = color
-        self.radius = radius
-        self.position_x = position_x
-        self.position_y = position_y
-        self.speed_x = speed
-        self.speed_y = speed
-
-    def draw(self, screen):
-        pygame.draw.ellipse(screen, self.color, self.rect)
-
-    def move(self):
-        self.rect.x += self.speed_x
-        self.rect.y += self.speed_y
-
-        if self.is_at_top() or self.is_at_bottom():
-            self.speed_y *= -1
-
-    def is_at_top(self):
-        # Set up the top limit of the ball
-        if self.rect.top <= 0:
-            return True
-        return False
-
-    def is_at_bottom(self):
-        # Set up the bottom limit of the ball
-        if self.rect.bottom >= WIDTH:
-            return True
-        return False
-
-    def is_at_left(self):
-        # Set up the left limit of the ball
-        if self.rect.left <= 0:
-            return True
-        return False
-
-    def is_at_right(self):
-        # Set up the right limit of the ball
-        if self.rect.right >= LENGTH:
-            return True
-        return False
-
-    def at_the_limit(self):
-        if (self.is_at_top() or 
-            self.is_at_bottom() or 
-            self.is_at_left() or 
-            self.is_at_right()):
-            return True
-        return False
-
-    def collision_with_paddle(self, paddle):
-        return self.rect.colliderect(paddle.rect)
-
-    def reset_position(self):
-        self.rect.x = LENGTH // 2 - self.rect.width // 2
-        self.rect.y = WIDTH // 2 - self.rect.height // 2
-        self.speed_x = random.choice([1, -1]) * abs(self.speed_x)
-        self.speed_y = random.choice([1, -1]) * abs(self.speed_y)
-
-
-class EndOfGame:
-
-    @classmethod
-    def check_if_someone_win(cls, player1_score, player2_score):
-        if player1_score == SCORE_TO_FINISH or player2_score == SCORE_TO_FINISH:
-            return True
-        return False
-
-    @classmethod
-    def draw(cls, screen, player1_score, player2_score):
-        if player1_score > player2_score:
-            result = "You Wins"
-        elif player1_score < player2_score:            
-            result = "You Lose"
-        else:
-            result = "Draw"
-
-        screen.fill((0, 0, 0))
-        font = pygame.font.Font(None, 36)
-        text = font.render(result, True, (255, 255, 255))
-        text_rect = text.get_rect(center=(LENGTH / 2, WIDTH / 2))
-        screen.blit(text, text_rect)
-        pygame.display.update()
-
-        wainting_for_enter = True
-        while wainting_for_enter:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_KP_ENTER):
-                    pygame.quit()
-                    exit()
 
 
 # Set up the player paddle
@@ -227,7 +78,7 @@ while True:
         player_score.increase()
         ball.reset_position()
 
-    if EndOfGame.check_if_someone_win(player_score.score, enemy_score.score):
-        EndOfGame.draw(screen, player_score.score, enemy_score.score)
+    if EndGame.check_if_someone_win(player_score.score, enemy_score.score):
+        EndGame.draw(screen, player_score.score, enemy_score.score)
 
     pygame.display.update()
