@@ -45,27 +45,27 @@ class Paddle:
     def move(self, direction):
         if direction > 0:
             # Move the paddle down
-            if not self.__is_at_bottom():
+            if not self.is_at_bottom():
                 self.rect.y += direction
         else:
             # Move the paddle up
-            if not self.__is_at_top():
+            if not self.is_at_top():
                 self.rect.y += direction
 
-    def __is_at_top(self):
+    def is_at_top(self):
         # Set up the top limit of the paddle
         if self.rect.y == 0:
             return True
         return False
 
-    def __is_at_bottom(self):
+    def is_at_bottom(self):
         # Set up the bottom limit of the paddle
         if self.rect.y == WIDTH - self.rect.height:
             return True
         return False
 
     def at_the_limit(self):
-        if self.__is_at_top() or self.__is_at_bottom():
+        if self.is_at_top() or self.is_at_bottom():
             return True
         return False
 
@@ -115,7 +115,7 @@ class Ball:
         return False
 
     def at_the_limit(self):
-        if self.is_at_top() or self.is_at_bottom():
+        if self.is_at_top() or self.is_at_bottom() or self.is_at_left() or self.is_at_right():
             return True
         return False
 
@@ -190,5 +190,17 @@ while True:
     if ball.is_at_right():
         player_score.increase()
         ball.reset_position()
+
+
+    # Check if the player wins
+    if player_score.score == 2:
+        screen.fill((0, 0, 0))
+        font = pygame.font.Font(None, 36)
+        text = font.render("You Wins", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(LENGTH / 2, WIDTH / 2))
+        screen.blit(text, text_rect)
+
+        if pygame.key.get_pressed()[K_KP_ENTER]:
+            pygame.quit()
 
     pygame.display.update()
