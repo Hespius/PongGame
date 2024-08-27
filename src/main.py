@@ -8,6 +8,7 @@ pygame.init()
 # Set up the window
 LENGTH = 640
 WIDTH = 480
+SCORE_TO_FINISH = 2
 
 # Set up the window size
 screen = pygame.display.set_mode(size=(LENGTH, WIDTH))
@@ -21,10 +22,10 @@ clock = pygame.time.Clock()
 
 class Score:
     def __init__(self, position_x, position_y, color, font_size, font) -> None:
+        self.font = pygame.font.Font(font, int(font_size))
         self.position_x = position_x
         self.position_y = position_y
         self.color = color
-        self.font = pygame.font.Font(font, int(font_size))
         self.score = 0
 
     def draw(self, screen, player):
@@ -115,7 +116,10 @@ class Ball:
         return False
 
     def at_the_limit(self):
-        if self.is_at_top() or self.is_at_bottom() or self.is_at_left() or self.is_at_right():
+        if (self.is_at_top() or 
+            self.is_at_bottom() or 
+            self.is_at_left() or 
+            self.is_at_right()):
             return True
         return False
 
@@ -127,6 +131,38 @@ class Ball:
         self.rect.y = WIDTH // 2 - self.rect.height // 2
         self.speed_x = random.choice([1, -1]) * abs(self.speed_x)
         self.speed_y = random.choice([1, -1]) * abs(self.speed_y)
+
+
+class EndOfGame:
+
+    @classmethod
+    def check_if_someone_win(cls, player1_score, player2_score):
+        if player1_score == SCORE_TO_FINISH or player2_score == SCORE_TO_FINISH:
+            return True
+        return False
+
+    @classmethod
+    def draw(cls, screen, player1_score, player2_score):
+        if player1_score > player2_score:
+            result = "You Wins"
+        elif player1_score < player2_score:            
+            result = "You Lose"
+        else:
+            result = "Draw"
+
+        screen.fill((0, 0, 0))
+        font = pygame.font.Font(None, 36)
+        text = font.render(result, True, (255, 255, 255))
+        text_rect = text.get_rect(center=(LENGTH / 2, WIDTH / 2))
+        screen.blit(text, text_rect)
+        pygame.display.update()
+
+        wainting_for_enter = True
+        while wainting_for_enter:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_KP_ENTER):
+                    pygame.quit()
+                    exit()
 
 
 # Set up the player paddle
@@ -191,42 +227,7 @@ while True:
         player_score.increase()
         ball.reset_position()
 
-
-    # Check if the player wins
-    if player_score.score == 2:
-        screen.fill((0, 0, 0))
-        font = pygame.font.Font(None, 36)
-        text = font.render("You Wins", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(LENGTH / 2, WIDTH / 2))
-        screen.blit(text, text_rect)
-        pygame.display.update()
-
-        wainting_for_enter = True
-        while wainting_for_enter:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_KP_ENTER):
-                    pygame.quit()
-                    exit()
-                
-
-        if pygame.key.get_pressed()[K_KP_ENTER]:
-            pygame.quit()
-
-    # Check if the enemy wins
-    if enemy_score.score == 2:
-        screen.fill((0, 0, 0))
-        font = pygame.font.Font(None, 36)
-        text = font.render("You Lose", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(LENGTH / 2, WIDTH / 2))
-        screen.blit(text, text_rect)
-        pygame.display.update()
-
-        wainting_for_enter = True
-        while wainting_for_enter:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_KP_ENTER):
-                    pygame.quit()
-                    exit()
-
+    if EndOfGame.check_if_someone_win(player_score.score, enemy_score.score):
+        EndOfGame.draw(screen, player_score.score, enemy_score.score)
 
     pygame.display.update()
