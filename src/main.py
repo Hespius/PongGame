@@ -43,8 +43,8 @@ while True:
             exit()
 
     # Draw the scores
-    player_score.draw(screen, "Player")
-    enemy_score.draw(screen, "Enemy")
+    player_score.draw(screen, "Player 1")
+    enemy_score.draw(screen, "Player 2")
 
     # Draw the field
     Field.draw(screen)
