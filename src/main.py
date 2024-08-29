@@ -17,9 +17,9 @@ clock = pygame.time.Clock()
 
 
 # Set up the player paddle
-player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, position_y=WIDTH/2, color=(255, 255, 255))
+player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, position_y=WIDTH/2, color=(255, 255, 255), speed=LENGTH/320)
 # Set up the enemy paddle
-enemy_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH - LENGTH/32, position_y=WIDTH/2, color=(255, 255, 255))
+enemy_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH - LENGTH/32, position_y=WIDTH/2, color=(255, 255, 255), speed=LENGTH/320)
 # Set up the ball
 ball = Ball(radius=LENGTH/48, position_x=LENGTH/2 - LENGTH/64, position_y=WIDTH/2 - LENGTH/64, color=(255, 255, 255), speed=LENGTH/320)
 
@@ -30,38 +30,45 @@ enemy_score = Score(position_x=LENGTH - LENGTH/2 + LENGTH/8, position_y=WIDTH/32
 # Set up the enemy paddle direction
 enemy_paddle_direction = 1
 
+difficulty = "hard"
+
 while True:
+    for events in pygame.event.get():
+        if events.type == QUIT:
+            pygame.quit()
+            exit()
+
     # Set up the frame rate
     clock.tick(120)
 
     # Set up the background
     screen.fill((0, 0, 0))
 
-    for events in pygame.event.get():
-        if events.type == QUIT:
-            pygame.quit()
-            exit()
+    # Draw the field
+    Field.draw(screen)
 
     # Draw the scores
     player_score.draw(screen, "Player 1")
     enemy_score.draw(screen, "Player 2")
 
-    # Draw the field
-    Field.draw(screen)
+    # Player paddle movement
+    keys = pygame.key.get_pressed()
+    if keys[K_UP]:
+        player_paddle.move("UP")
+    if keys[K_DOWN]:
+        player_paddle.move("DOWN")
 
-    # Draw the player paddle
+    # Update the paddles
+    enemy_paddle.update(ball, difficulty)
+
+    # Draw the paddles
     player_paddle.draw(screen)
-
-    if pygame.key.get_pressed()[K_UP]:
-        player_paddle.move(-LENGTH/320)
-    if pygame.key.get_pressed()[K_DOWN]:
-        player_paddle.move(LENGTH/320)
-
-    # Draw the enemy paddle
     enemy_paddle.draw(screen)
 
-    if enemy_paddle.at_the_limit():
-        enemy_paddle_direction *= -1
+    # if pygame.key.get_pressed()[K_UP]:
+    #     player_paddle.move(-LENGTH/320)
+    # if pygame.key.get_pressed()[K_DOWN]:
+    #     player_paddle.move(LENGTH/320)
 
     # Draw the ball
     ball.draw(screen)
