@@ -1,20 +1,24 @@
 import pygame
-from pygame.locals import *
 from sys import exit
+from pygame.locals import *
+
 from entities import Ball, Score, Paddle, EndGame, Field
 from utils.constants import LENGTH, WIDTH, SCORE_TO_FINISH
+from settings import GameSettings
 
 pygame.init()
 
+settings = GameSettings()
+
 # Set up the window size
-screen = pygame.display.set_mode((LENGTH, WIDTH))
+screen = pygame.display.set_mode((int(settings.get('Window', 'WINDOWS_LENGTH')), int(settings.get('Window', 'WINDOWS_WIDTH'))))
 
 # Set up name of the window
 pygame.display.set_caption(title="Pong")
 
 # Set up the clock
 clock = pygame.time.Clock()
-
+fps = int(settings.get('Game', 'FPS'))
 
 # Set up the player paddle
 player_paddle = Paddle(width=LENGTH/64, height=WIDTH/4, position_x=LENGTH/64, position_y=WIDTH/2, color=(255, 255, 255), speed=LENGTH/320)
@@ -30,7 +34,7 @@ enemy_score = Score(position_x=LENGTH - LENGTH/2 + LENGTH/8, position_y=WIDTH/32
 # Set up the enemy paddle direction
 enemy_paddle_direction = 1
 
-difficulty = "hard"
+difficulty = settings.get('Game', 'DIFFICULTY')
 
 while True:
     for events in pygame.event.get():
@@ -39,7 +43,7 @@ while True:
             exit()
 
     # Set up the frame rate
-    clock.tick(120)
+    clock.tick(fps)
 
     # Set up the background
     screen.fill((0, 0, 0))
@@ -64,11 +68,6 @@ while True:
     # Draw the paddles
     player_paddle.draw(screen)
     enemy_paddle.draw(screen)
-
-    # if pygame.key.get_pressed()[K_UP]:
-    #     player_paddle.move(-LENGTH/320)
-    # if pygame.key.get_pressed()[K_DOWN]:
-    #     player_paddle.move(LENGTH/320)
 
     # Draw the ball
     ball.draw(screen)
