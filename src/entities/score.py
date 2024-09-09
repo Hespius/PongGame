@@ -1,6 +1,8 @@
 import pygame
-from utils.constants import LENGTH, WIDTH
 
+
+LENGTH = 640
+WIDTH = 480
 
 class Score:
     def __init__(self, position_x, position_y, color, font_size, font) -> None:

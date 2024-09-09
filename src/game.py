@@ -3,28 +3,28 @@ from pygame.locals import QUIT
 from states.start_screen import StartScreen
 from interfaces import BaseState
 
-class GameManager:
+class Game:
     title = "Pong!"
 
     def __init__(self, settings):
         self.__state = None
-        self.__settings = settings
+        self.settings = settings
         self.__set_screen()
         self.__set_title()
         self.__set_fps()
 
     def __set_screen(self):
         self.screen = pygame.display.set_mode(
-            (int(self.__settings.get("Window", "WINDOWS_LENGTH")),
-             int(self.__settings.get("Window", "WINDOWS_WIDTH")))
+            (int(self.settings.get("Window", "WINDOWS_LENGTH")),
+             int(self.settings.get("Window", "WINDOWS_WIDTH")))
         )
 
     def __set_title(self):
-        pygame.display.set_caption(GameManager.title)
+        pygame.display.set_caption(Game.title)
 
     def __set_fps(self):
         self.clock = pygame.time.Clock()
-        self.fps = int(self.__settings.get("Game", "FPS"))
+        self.fps = int(self.settings.get("Game", "FPS"))
 
     def change_to(self, state: BaseState):
         self.__state = state
@@ -45,7 +45,7 @@ class GameManager:
 
     def run(self):
 
-        self.change_to(StartScreen(self))
+        self.__state = StartScreen(self)
 
         while True:
             events = pygame.event.get()

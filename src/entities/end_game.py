@@ -1,7 +1,10 @@
 from enum import Enum
 import pygame
 from pygame.locals import K_KP_ENTER
-from utils.constants import LENGTH, WIDTH, SCORE_TO_FINISH
+
+LENGTH = 640
+WIDTH = 480
+SCORE_TO_FINISH = 5
 
 class Result(Enum):
     WIN = "You Wins"

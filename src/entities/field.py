@@ -1,20 +1,20 @@
 import pygame
-from utils.constants import LENGTH, WIDTH
 
 
 class Field:
 
-    @staticmethod
-    def draw(screen):
-        # Create a transparent surface
-        transparent_surface = pygame.Surface((LENGTH, WIDTH), pygame.SRCALPHA)
-        
-        # Define the color with transparency (RGBA)
-        color = (255, 255, 255, 36)  # 128 is the alpha value for 50% transparency
-        
-        dash_length = 10
-        for y in range(0, WIDTH, dash_length * 2):
-            pygame.draw.line(transparent_surface, color, (LENGTH / 2, y), (LENGTH / 2, y + dash_length), 1)
+    def __init__(self, game):
+        self.game = game
+        self.height = game.screen.get_height()
+        self.width = game.screen.get_width()
 
-        # Blit the transparent surface onto the main screen
+    def render(self, screen):
+        transparent_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        color = (255, 255, 255, 36)
+
+        dash_length = 10
+
+        for y in range(0, self.height, dash_length * 2):
+            pygame.draw.line(transparent_surface, color, (self.width / 2, y), (self.width / 2, y + dash_length), 1)
+
         screen.blit(transparent_surface, (0, 0))

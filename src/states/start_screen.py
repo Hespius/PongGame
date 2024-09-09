@@ -4,7 +4,7 @@ from interfaces import BaseState
 
 class StartScreen(BaseState):
 
-    def __init__(self, game):
+    def __init__(self, game) -> None:
         super().__init__(game)
         self.__alpha = 255
         self.__fade_out = True
@@ -15,7 +15,7 @@ class StartScreen(BaseState):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     from states.match_screen import MatchScreen
-                    self.game.set_state(MatchScreen(self.game))
+                    self.game.change_to(MatchScreen(self.game))
 
     def update(self):
         if self.__fade_out:
@@ -33,7 +33,6 @@ class StartScreen(BaseState):
         screen.fill((0, 0, 0))
         self.__render_start_text(screen)
         self.__render_game_title(screen)
-
 
     def __render_game_title(self, screen):
         font = pygame.font.Font(None, screen.get_width() // 4)
